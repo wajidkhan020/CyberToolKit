@@ -1,16 +1,26 @@
-# Large wordlists
-general-list.txt
-*.txt
-*.zip
-*.gz
-
-# Python cache
+# ===== Python =====
 __pycache__/
 *.pyc
+*.pyo
 
-# Environment files
+# ===== Jupyter =====
+.ipynb_checkpoints/
+*.ipynb
+
+# ===== Large / Generated =====
+*.h5
+*.keras
+*.pkl
+
+# ===== Wordlists =====
+general-list.txt
+*.txt
+*.gz
+*.zip
+
+# ===== Environment =====
 .env
 
-# OS junk
+# ===== OS junk =====
 .DS_Store
 Thumbs.db
