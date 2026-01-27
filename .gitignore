@@ -1,0 +1,16 @@
+# Large wordlists
+general-list.txt
+*.txt
+*.zip
+*.gz
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment files
+.env
+
+# OS junk
+.DS_Store
+Thumbs.db
