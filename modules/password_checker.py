@@ -239,33 +239,33 @@ def set_bg(image_file):
 set_bg("bg.jpg")
 
 from pathlib import Path
-
+import requests
 @st.cache_resource
-def load_common_passwords():
-    """Load password list into a hash set for O(1) lookup"""
-    
-    # Resolve path relative to the script
-    script_dir = Path(__file__).parent
-    dictionary_path = script_dir / "general-list.txt"
+def load_common_passwords(limit=200_000):
+    """
+    Load common passwords from RockYou (GitHub raw)
+    Limit is REQUIRED to avoid Streamlit crash
+    """
+    url = "https://raw.githubusercontent.com/brannondorsey/naive-hashcat/master/rockyou.txt"
 
     passwords = set()
-    
-    if not dictionary_path.exists():
-        st.sidebar.warning(f"Password list not found at {dictionary_path}! Dictionary check disabled.⚠️")
-        return None
 
     try:
-        with dictionary_path.open("r", encoding="utf-8", errors="ignore") as f:
-            for line in f:
-                pwd = line.strip()
-                if pwd:
-                    passwords.add(pwd.lower())
-        st.sidebar.success(f"✅ Loaded {len(passwords):,} common passwords")
+        with requests.get(url, stream=True, timeout=15) as r:
+            r.raise_for_status()
+            for i, line in enumerate(r.iter_lines(decode_unicode=True)):
+                if line:
+                    passwords.add(line.strip().lower())
+                if i >= limit:
+                    break
+
+        st.sidebar.success(f"✅ Loaded {len(passwords):,} RockYou passwords (online)")
+        return passwords
+
     except Exception as e:
-        st.sidebar.error(f"Error loading password list: {e}")
+        st.sidebar.error(f"❌ Failed to load RockYou list: {e}")
         return None
 
-    return passwords
 
 # Common password patterns
 COMMON_PATTERNS = {
