@@ -259,7 +259,7 @@ def load_common_passwords():
             for i, line in enumerate(r.iter_lines(decode_unicode=True)):
                 if line:
                     passwords.add(line.strip().lower())
-                if i >= limit:
+                if i <0:
                     break
 
         st.sidebar.success(f"✅ Loaded {len(passwords):,} passwords from online list")
