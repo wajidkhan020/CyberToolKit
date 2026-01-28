@@ -240,26 +240,26 @@ set_bg("bg.jpg")
 
 from pathlib import Path
 import requests
-@st.cache_resource
-def load_common_passwords(limit=200_000):
-    """
-    Load common passwords from RockYou (GitHub raw)
-    Limit is REQUIRED to avoid Streamlit crash
-    """
-    url = "https://raw.githubusercontent.com/brannondorsey/naive-hashcat/master/rockyou.txt"
+import gzip
+from io import BytesIO
 
+@st.cache_resource
+def load_common_passwords():
+    url = "https://raw.githubusercontent.com/brannondorsey/naive-hashcat/master/rockyou.txt.gz"
     passwords = set()
 
     try:
-        with requests.get(url, stream=True, timeout=15) as r:
+        with st.spinner("Loading RockYou password database (online)..."):
+            r = requests.get(url, timeout=30)
             r.raise_for_status()
-            for i, line in enumerate(r.iter_lines(decode_unicode=True)):
-                if line:
-                    passwords.add(line.strip().lower())
-                if i >= limit:
-                    break
 
-        st.sidebar.success(f"✅ Loaded {len(passwords):,} RockYou passwords (online)")
+            with gzip.open(BytesIO(r.content), "rt", encoding="utf-8", errors="ignore") as f:
+                for line in f:
+                    pwd = line.strip().lower()
+                    if pwd:
+                        passwords.add(pwd)
+
+        st.sidebar.success(f"✅ Loaded {len(passwords):,} RockYou passwords")
         return passwords
 
     except Exception as e:
