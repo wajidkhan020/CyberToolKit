@@ -242,30 +242,32 @@ from pathlib import Path
 import requests
 import gzip
 from io import BytesIO
-
 @st.cache_resource
-def load_common_passwords():
-    url = "https://raw.githubusercontent.com/brannondorsey/naive-hashcat/master/rockyou.txt.gz"
+def load_common_passwords(limit=200_000):
+    """
+    Load a rockyou-style list from an online GitHub raw file.
+    The limit parameter prevents memory issues.
+    """
+    url = "https://github.com/josuamarcelc/common-password-list/raw/refs/heads/main/rockyou_2025_00.txt"
     passwords = set()
 
     try:
-        with st.spinner("Loading RockYou password database (online)..."):
-            r = requests.get(url, timeout=30)
+        with st.spinner("📥 Downloading password list..."):
+            r = requests.get(url, stream=True, timeout=30)
             r.raise_for_status()
 
-            with gzip.open(BytesIO(r.content), "rt", encoding="utf-8", errors="ignore") as f:
-                for line in f:
-                    pwd = line.strip().lower()
-                    if pwd:
-                        passwords.add(pwd)
+            for i, line in enumerate(r.iter_lines(decode_unicode=True)):
+                if line:
+                    passwords.add(line.strip().lower())
+                if i >= limit:
+                    break
 
-        st.sidebar.success(f"✅ Loaded {len(passwords):,} RockYou passwords")
+        st.sidebar.success(f"✅ Loaded {len(passwords):,} passwords from online list")
         return passwords
 
     except Exception as e:
-        st.sidebar.error(f"❌ Failed to load RockYou list: {e}")
+        st.sidebar.error(f"❌ Failed to load online password list: {e}")
         return None
-
 
 # Common password patterns
 COMMON_PATTERNS = {
