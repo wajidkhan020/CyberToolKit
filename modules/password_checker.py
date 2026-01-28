@@ -243,7 +243,7 @@ import requests
 import gzip
 from io import BytesIO
 @st.cache_resource
-def load_common_passwords(limit=200_000):
+def load_common_passwords():
     """
     Load a rockyou-style list from an online GitHub raw file.
     The limit parameter prevents memory issues.
