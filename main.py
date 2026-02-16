@@ -142,9 +142,9 @@ MODULES = {
         "icon": "",
         "color": "#f7971e"
     },
-    "WiFi Security Analyzer": {
+    "Advance URL Analyzer": {
         "file": "wifi_analyzer.py",
-        "description": "Scan nearby WiFi networks, detect encryption vulnerabilities, identify evil twin attacks, and get security recommendations.",
+        "description": "Scan and analyze URLs in real time, detect suspicious domains, identify phishing patterns, check for hidden redirects, and provide security risk assessment with safety recommendations.",
         "icon": "",
         "color": "#11998e"
     }
@@ -240,18 +240,10 @@ def main():
         # Show home dashboard
         show_home()
     else:
-        # Show back button
-        col1, col2 = st.columns([5, 1])
-        with col2:
-            if st.button("Home", help="Back to Home"):
-                st.session_state.current_module = None
-                st.rerun()
-    
-        st.markdown("---")
-        
-        # Load selected module
+    # Directly load selected module (no Home button)
         module_info = MODULES[st.session_state.current_module]
         run_module(module_info["file"])
+
     
 if __name__ == "__main__":
     main()

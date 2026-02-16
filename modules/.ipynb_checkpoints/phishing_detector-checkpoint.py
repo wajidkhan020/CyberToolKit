@@ -92,16 +92,63 @@ def set_custom_style(image_file="phish.jpg"):
             box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
         }
         
-    
         section[data-testid="stSidebar"] {
             background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.6)) !important;
             border-right: 2px solid rgba(255,255,255,0.2) !important;
+            width: 21rem !important;               /* Add this */
+            min-width: 21rem !important;           /* Add this */
+            max-width: 21rem !important;           /* Add this */
+            flex-shrink: 0 !important;             /* Add this */
+            flex-grow: 0 !important;               /* Add this */
+            resize: none !important;  
+        }
+                
+        /* Hide resize handle */
+        section[data-testid="stSidebar"]::after {
+            display: none !important;
         }
         
         section[data-testid="stSidebar"] * {
             color: #ffffff !important;
         }
+        /* Hide collapse button */
+        [data-testid="stSidebarCollapseButton"] {
+            display: none !important;
+        }
         
+        [data-testid="stSidebarHeader"] {
+            display: none !important;
+        }
+        /* Sidebar scrolling */
+    section[data-testid="stSidebar"] > div:first-child {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        max-height: 100vh !important;
+        padding: 2rem 1rem !important;
+    }
+    
+    /* Custom scrollbar */
+    section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar {
+        width: 8px !important;
+    }
+    
+    section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.3) !important;
+        border-radius: 10px !important;
+    }
+    
+    section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.3) !important;
+        border-radius: 10px !important;
+    }
+    
+    section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar-thumb:hover {
+        background: rgba(255,255,255,0.5) !important;
+    }
+        
+        button[kind="header"] {
+            display: none !important;
+        }
         
         [data-testid="stMetricValue"] {
             color: #ffffff !important;
@@ -213,7 +260,7 @@ def load_model_and_tokenizer():
         
         return model, tokenizer, config
     except Exception as e:
-        st.error(f"❌ Error loading model files: {e}")
+        st.error(f" Error loading model files: {e}")
         return None, None, None
 
 # Text cleaning function
@@ -552,6 +599,13 @@ Project Manager"""
     
     
     with st.sidebar:
+        # 🔙 Back to Home button (TOP LEFT in sidebar)
+        if st.button("⬅ Back"):
+            st.session_state.current_module = None
+            st.rerun()
+    
+        st.markdown("---")
+
         st.markdown("### Catch Phish Before They Catch You")
         
         

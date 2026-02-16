@@ -40,6 +40,43 @@ def set_bg(image_file):
             z-index: 1;
         }}
         
+                /* Hide collapse button */
+        [data-testid="stSidebarCollapseButton"] {{
+            display: none !important;
+        }}
+        
+        [data-testid="stSidebarHeader"] {{
+            display: none !important;
+        }}
+        
+        button[kind="header"] {{
+            display: none !important;
+        }}
+        /* Sidebar scrolling */
+        section[data-testid="stSidebar"] > div:first-child {{
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            max-height: 100vh !important;
+        }}
+        
+        /* Custom scrollbar */
+        section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar {{
+            width: 8px !important;
+        }}
+        
+        section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar-track {{
+            background: rgba(0,0,0,0.3) !important;
+            border-radius: 10px !important;
+        }}
+        
+        section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar-thumb {{
+            background: rgba(0,255,255,0.5) !important;
+            border-radius: 10px !important;
+        }}
+        
+        section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar-thumb:hover {{
+            background: rgba(0,255,255,0.8) !important;
+        }}
         /* sidebar ki styling */
         section[data-testid="stSidebar"] {{
             display: block !important;
@@ -260,9 +297,8 @@ def load_common_passwords():
                 pwd = line.strip()
                 if pwd:
                     passwords.add(pwd.lower())
-        st.sidebar.success(f"✅ Loaded {len(passwords):,} common passwords")
     except Exception as e:
-        st.sidebar.error(f"Error loading password list: {e}")
+      
         return None
 
     return passwords
@@ -487,9 +523,22 @@ def main():
     
     common_passwords = load_common_passwords()
     
-    # Sidebar
+    # =========================
+    # SIDEBAR
+    # =========================
     with st.sidebar:
-        
+
+        # 🔙 Back button at top-left
+        if st.button("⬅ Back"):
+            st.session_state.current_module = None
+            st.rerun()
+
+        st.markdown("---")
+        if common_passwords:
+            st.success(f"✅ Loaded {len(common_passwords):,} common passwords")
+        else:
+            st.warning("Password list not found! Dictionary check disabled ⚠️")
+
         st.subheader(" Password Generator")
         gen_length = st.slider("Password Length", 8, 32, 16)
         
@@ -500,6 +549,7 @@ def main():
         
         st.markdown("---")
         st.subheader("📊 Database Info")
+        
         if common_passwords:
             st.metric("Dictionary Size", f"{len(common_passwords):,}")
             st.caption("Loaded from password list")
@@ -515,12 +565,16 @@ def main():
         - 🟠 **Weak** (20-39%)
         - 🔴 **Critical** (0-19%)
         """)
-    
-    # Main content
+
+    # =========================
+    # MAIN PAGE CONTENT
+    # =========================
     st.info(" **Quote** Complexity is your friend, predictability is your enemy in password creation.")
     
     st.markdown("###  Enter Password to Analyze")
     
+    # your input + analysis code continues here...
+
     # Centered input with better layout
     col1, col2, col3 = st.columns([1, 3, 1])
     

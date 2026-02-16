@@ -195,19 +195,30 @@ def set_custom_style(image_file="phish.jpg"):
     """, unsafe_allow_html=True)
 
 # Load model and tokenizer (cached for performance)
+import os
+
 @st.cache_resource
 def load_model_and_tokenizer():
-    """Load trained model and tokenizer"""
     try:
-        model = tf.keras.models.load_model('phishing_detector.keras')
-        
-        with open('tokenizer.pkl', 'rb') as f:
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        MODEL_DIR = os.path.join(BASE_DIR, "modules")
+
+        model_path = os.path.join(MODEL_DIR, "phishing_detector.keras")
+        tokenizer_path = os.path.join(MODEL_DIR, "tokenizer.pkl")
+        config_path = os.path.join(MODEL_DIR, "config.pkl")
+
+        st.write("🔍 Model path:", model_path)  # DEBUG LINE
+
+        model = tf.keras.models.load_model(model_path)
+
+        with open(tokenizer_path, "rb") as f:
             tokenizer = pickle.load(f)
-        
-        with open('config.pkl', 'rb') as f:
+
+        with open(config_path, "rb") as f:
             config = pickle.load(f)
-        
+
         return model, tokenizer, config
+
     except Exception as e:
         st.error(f"❌ Error loading model files: {e}")
         return None, None, None

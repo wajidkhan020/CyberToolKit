@@ -12,28 +12,88 @@ def main():
 
 st.markdown("""
 <style>
-  
     .stApp {
-        background: linear-gradient(135deg, #0a0e27 0%, #1b2e 50%, #1613e 100%) !important;
-        color: #00ffff;
-    }
-    
-    
+    background-color: #0a0e27 !important;
+    color: #00ffff;
+}
     section[data-testid="stSidebar"] {
         background-color: #05071a !important;
         border-right: 2px solid rgba(0, 255, 255, 0.2) !important;
     }
+  /* Sidebar styling - Fixed, non-collapsible, scrollable */
+       section[data-testid="stSidebar"] {
+        background-color: #05071a !important;
+        border-right: 2px solid rgba(0, 255, 255, 0.2) !important;
+        width: 21rem !important;
+        min-width: 21rem !important;
+        max-width: 21rem !important;
+        flex-shrink: 0 !important;
+        flex-grow: 0 !important;
+    }
+    /* Make sidebar scrollable */
+    section[data-testid="stSidebar"] > div:first-child {
+        background: transparent !important;
+        padding: 2rem 1rem !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        max-height: 100vh !important;
+    }
+    
+    /* Custom scrollbar for sidebar */
+    section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar {
+        width: 8px !important;
+    }
+    
+    section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.3) !important;
+        border-radius: 10px !important;
+    }
+    
+    section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar-thumb {
+        background: rgba(0,255,255,0.5) !important;
+        border-radius: 10px !important;
+    }
+    
+    section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar-thumb:hover {
+        background: rgba(0,255,255,0.8) !important;
+    }
+    
+    /* Prevent sidebar from collapsing */
+    section[data-testid="stSidebar"][aria-expanded="false"] {
+        margin-left: 0 !important;
+    }
+    
+    section[data-testid="stSidebar"][aria-expanded="true"] {
+        margin-left: 0 !important;
+    }
+    
+    /* Hide collapse button */
+    [data-testid="stSidebarCollapseButton"] {
+        display: none !important;
+    }
+    
+    [data-testid="stSidebarHeader"] {
+        display: none !important;
+    }
+    
+    /* Main content scrolling */
+    .main .block-container {
+        overflow-y: auto !important;
+        max-height: 100vh !important;
+    }
+    
+    [data-testid="stSidebarHeader"] {
+        display: none !important;
+    }
        
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    # header {visibility: hidden;}
-    
+    /* header {visibility: hidden;} */
     
     .block-container {
         padding-top: 1rem !important;
     }
     
-   
     h1 {
         color: #00ffff;
         text-align: center;
@@ -50,10 +110,6 @@ st.markdown("""
         to { text-shadow: 0 0 30px rgba(0, 255, 255, 1), 0 0 60px rgba(0, 255, 255, 0.7); }
     }
     
-  
-   
-    
-    
     .stTextInput > div > div > input {
         background-color: rgba(0, 20, 40, 0.8) !important;
         color: #00ffff !important;
@@ -69,7 +125,6 @@ st.markdown("""
         box-shadow: 0 0 15px rgba(0, 255, 255, 0.5) !important;
     }
     
-   
     .stButton > button {
         background: linear-gradient(90deg, #00d9ff 0%, #0066ff 100%) !important;
         color: white !important;
@@ -93,7 +148,6 @@ st.markdown("""
                     0 8px 20px rgba(0, 102, 255, 0.6) !important;
     }
     
-   
     .success-box {
         background: rgba(0, 255, 100, 0.1);
         border: 2px solid #00ff64;
@@ -104,7 +158,6 @@ st.markdown("""
         box-shadow: 0 0 20px rgba(0, 255, 100, 0.3);
     }
     
-   
     .danger-box {
         background: rgba(255, 0, 100, 0.1);
         border: 2px solid #ff0064;
@@ -121,7 +174,6 @@ st.markdown("""
         50% { box-shadow: 0 0 30px rgba(255, 0, 100, 0.6); }
     }
     
-    
     .warning-box {
         background: rgba(255, 200, 0, 0.1);
         border: 2px solid #ffc800;
@@ -132,7 +184,6 @@ st.markdown("""
         box-shadow: 0 0 20px rgba(255, 200, 0, 0.3);
     }
     
-    
     .subtitle {
         text-align: center;
         color: rgba(0, 255, 255, 0.6);
@@ -142,7 +193,6 @@ st.markdown("""
         margin-bottom: 2rem;
     }
     
-   
     .status-indicators {
         display: flex;
         justify-content: center;
@@ -176,7 +226,6 @@ st.markdown("""
         50% { opacity: 0.3; }
     }
     
-    /* Info footer */
     .info-footer {
         text-align: center;
         color: rgba(0, 255, 255, 0.4);
@@ -187,7 +236,6 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
 
 st.markdown('<h1> BREACH SCANNER</h1>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle"> Real-Time Breach Detection & Security Analysis </p>', unsafe_allow_html=True)
@@ -222,6 +270,9 @@ def check_password_leak(password):
 
 password = st.text_input("🔒 ENTER PASSWORD", type="password", placeholder="••••••••••••")
 with st.sidebar:
+    if st.button("⬅ Back"):
+        st.session_state.current_module = None
+        st.rerun()   # force instant refresh
     st.header("ℹ️ About")
     st.markdown("""
     <h3 style='color: white; font-size: 1 rem; font-weight: bold; margin-top: 1 rem;'> Breach Scanner Help you:</h3>
@@ -233,12 +284,15 @@ with st.sidebar:
     
     <h3 style='color: white; font-size: 1.3rem; font-weight: bold; margin-top: 1 rem;'> How It Works:</h3>
     
-    * **<span style='color: white; font-weight: bold;'>Hashing:</span>** Your password is first converted into a **SHA-1 hash** (a unique, irreversible string) *locally on your machine*.
-    * **<span style='color: white; font-weight: bold;'>K-Anonymity:</span>** The application sends **only the first 5 characters** of the hash to the HIBP service.
-    * **<span style='color: white; font-weight: bold;'>Local Comparison:</span>** HIBP returns a list of all leaked hash suffixes matching those 5 characters. The tool then checks the list locally for the remainder of your hash.
+    * **<span style='color: white; font-weight: bold;'>Hashing:</span>** Your password is first converted into a **SHA-1 hash**.
+    * **<span style='color: white; font-weight: bold;'>K-Anonymity:</span>** Only first 5 hash characters are sent.
+    * **<span style='color: white; font-weight: bold;'>Local Comparison:</span>** Remaining hash is matched locally.
     """, unsafe_allow_html=True)
+
     st.markdown("---")
     st.caption("🔒 This tool only scans publicly broadcast information. It does NOT hack or attack networks.")
+
+
     
 if st.button(" Scan Now"):
     if not password:
